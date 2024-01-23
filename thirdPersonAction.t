@@ -16,19 +16,57 @@ thirdPersonActionModuleID: ModuleID {
 }
 
 modify Thing
+	isThirdPerson() { return(gActor != gPlayerChar); }
 	basicExamine() {
-		local b, o;
-		if(gActor == gPlayerChar) {
+		local b;
+
+		if(!isThirdPerson()) {
 			inherited();
 			return;
 		}
 
+		// Remember the values for the described flag on the
+		// object and the state of the output filter.
 		b = described;
-		o = gOutputCheck;
+
 		gOutputOff;
+
+		// Do a standard examine.
 		inherited();
+
+		gOutputOn;
+
+		// Reset the state to where it was.
 		described = b;
-		gOutputSet(o);
-		"Foo\n ";
+
+		defaultDescReport(&thirdPersonBasicExamine, gActor, self);
+	}
+
+	basicExamineSmell(explicit) {
+		if(!isThirdPerson()) {
+			inherited(explicit);
+			return;
+		}
+		defaultDescReport(&thirdPersonSmell, gActor, self);
+	}
+	basicExamineListen(explicit) {
+		if(!isThirdPerson()) {
+			inherited(explicit);
+			return;
+		}
+		defaultDescReport(&thirdPersonListen, gActor, self);
 	}
 ;
+
+thirdPersonFilter: OutputFilter, PreinitObject
+	active = nil
+	filterText(str, val) { return(active ? '' : inherited(str, val)); }
+	execute() { mainOutputStream.addOutputFilter(self); }
+;
+
+class ThirdPersonTranscript: CommandTranscript
+	addReport(report) {}
+	filterText(ostr, txt)  { return(nil); }
+	reports_ = static []
+;
+

@@ -24,6 +24,26 @@
 startRoom: Room 'Void' "This is a featureless void.";
 +me: Person;
 +pebble: Thing 'small round pebble' 'pebble' "A small, round pebble. ";
++flower: Thing 'smelly flower' 'flower'
+	"A smelly flower with a tag labelled <<toString(foozle)>>. "
+	smellPresence = true
+	foozle = 0
+	_fake() {
+		foozle = 123;
+		return('');
+	}
+	smellDesc = "It smells like a flower, only more so. <<_fake()>>"
+;
++radio: Thing 'noisy radio' 'radio'
+	"A noisy radio with a tag labelled <<toString(foozle)>>. "
+	soundPresence = true
+	foozle = 0
+	_fake() {
+		foozle = 123;
+		return('');
+	}
+	soundDesc = "It sounds like a radio, only more so. <<_fake()>>"
+;
 +alice: Person 'Alice' 'Alice'
 	"She looks like the first person you'd turn to in a problem. "
 	isHer = true
@@ -35,13 +55,22 @@ gameMain: GameMainDef initialPlayerChar = me;
 
 DefineSystemAction(Foozle)
 	execSystemAction() {
-		_tryCommand(alice, 'x pebble');
+		//_tryCommand(alice, 'x pebble');
+		//_tryCommand(alice, 'x flower');
+		//_tryCommand(alice, 'x radio');
+		//_tryCommand(alice, 'smell pebble');
+		//_tryCommand(alice, 'smell flower');
+		//_tryCommand(alice, 'listen to pebble');
+		//_tryCommand(alice, 'listen to radio');
+		newActorAction(alice, Smell, pebble);
+		newActorAction(alice, Smell, flower);
+		flower.basicExamineSmell(true);
 	}
 	_tryCommand(actor, cmd) {
-		"\nexecuting <q><<toString(cmd)>></q> as <<actor.name>>:\n ";
-		"\n===START COMMAND===\n ";
+		"\n<q><<toString(cmd)>></q> as <<actor.name>>:\n ";
 		execCommandAs(actor, cmd);
-		"\n===END COMMAND===\n ";
+		"\n==========\n ";
+		"<.p>\n ";
 	}
 ;
 VerbRule(Foozle) 'foozle': FoozleAction VerbPhrase = 'foozle/foozling';

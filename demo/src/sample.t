@@ -21,26 +21,28 @@
 
 #include "thirdPersonAction.h"
 
-versionInfo: GameID
-        name = 'thirdPersonAction Library Demo Game'
-        byline = 'Diegesis & Mimesis'
-        desc = 'Demo game for the thirdPersonAction library. '
-        version = '1.0'
-        IFID = '12345'
-	showAbout() {
-		"This is a simple test game that demonstrates the features
-		of the thirdPersonAction library.
-		<.p>
-		Consult the README.txt document distributed with the library
-		source for a quick summary of how to use the library in your
-		own games.
-		<.p>
-		The library source is also extensively commented in a way
-		intended to make it as readable as possible. ";
-	}
-;
-
 startRoom: Room 'Void' "This is a featureless void.";
 +me: Person;
++pebble: Thing 'small round pebble' 'pebble' "A small, round pebble. ";
++alice: Person 'Alice' 'Alice'
+	"She looks like the first person you'd turn to in a problem. "
+	isHer = true
+	isProperName = true
+;
 
+versionInfo: GameID;
 gameMain: GameMainDef initialPlayerChar = me;
+
+DefineSystemAction(Foozle)
+	execSystemAction() {
+		_tryCommand(alice, 'x pebble');
+	}
+	_tryCommand(actor, cmd) {
+		"\nexecuting <q><<toString(cmd)>></q> as <<actor.name>>:\n ";
+		"\n===START COMMAND===\n ";
+		execCommandAs(actor, cmd);
+		"\n===END COMMAND===\n ";
+	}
+;
+VerbRule(Foozle) 'foozle': FoozleAction VerbPhrase = 'foozle/foozling';
+

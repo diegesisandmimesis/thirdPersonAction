@@ -19,8 +19,8 @@ modify Thing
 	// Boolean true if the current actor is an NPC.
 	isThirdPerson = (gActor != gPlayerChar)
 
-	// Flag used by nested action mechanism.
-	_thirdPersonRecursionFlag = nil
+	// Output lock.
+	_thirdPersonOutputLock = nil
 
 	basicExamine() {
 		local b, f;
@@ -52,11 +52,9 @@ modify Thing
 	// Do everything we need to do to turn off output for our nested
 	// action mechanism.
 	_thirdPersonOutputOff() {
-		// Flag to indicate we're going to do a nested action.
-		_thirdPersonRecursionFlag = true;
-
-		// Turn on our output filter.
-		thirdPersonFilter.active = true;
+		// Set an output lock.  This will prevent output, and we'll
+		// use it to check for nested actions.
+		_thirdPersonOutputLock = gOutputLock;
 
 		// Deactivate the transcript, to prevent queuing of
 		// reports.
@@ -68,11 +66,9 @@ modify Thing
 		// Re-enable the transcript.
 		gTranscript.activate();
 
-		// Turn off our output filter.
-		thirdPersonFilter.active = nil;
-
-		// Mark that we're done with the nested action.
-		_thirdPersonRecursionFlag = nil;
+		// Remove the output lock.
+		gOutputUnlock(_thirdPersonOutputLock);
+		_thirdPersonOutputLock = nil;
 	}
 
 	basicExamineSmell(explicit) {
@@ -80,7 +76,7 @@ modify Thing
 			inherited(explicit);
 			return;
 		}
-		if(_thirdPersonRecursionFlag == nil)
+		if(_thirdPersonOutputLock == nil)
 			_thirdPersonSenseExamine(explicit, &thirdPersonSmell);
 		else
 			inherited(explicit);
@@ -91,7 +87,7 @@ modify Thing
 			inherited(explicit);
 			return;
 		}
-		if(_thirdPersonRecursionFlag == nil)
+		if(_thirdPersonOutputLock == nil)
 			_thirdPersonSenseExamine(explicit, &thirdPersonListen);
 		else
 			inherited(explicit);

@@ -66,6 +66,8 @@ DefineSystemAction(Foozle)
 		newActorAction(alice, Smell, pebble);
 		newActorAction(alice, Smell, flower);
 		newActorAction(alice, Examine, flower);
+		newActorAction(alice, ListenTo, pebble);
+		newActorAction(alice, ListenTo, radio);
 		aioSay('\n===END===\n ');
 	}
 	_tryCommand(actor, cmd) {

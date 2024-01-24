@@ -16,9 +16,12 @@ thirdPersonActionModuleID: ModuleID {
 }
 
 modify Thing
-	isThirdPerson() { return(gActor != gPlayerChar); }
+	isThirdPerson = (gActor != gPlayerChar)
+
+	_thirdPersonFlag = nil
+
 	basicExamine() {
-		local b;
+		local b, f;
 
 		if(!isThirdPerson()) {
 			inherited();
@@ -29,12 +32,14 @@ modify Thing
 		// object and the state of the output filter.
 		b = described;
 
-		gOutputOff;
+		// Add an output lock.
+		f = gOutputLock;
 
 		// Do a standard examine.
 		inherited();
 
-		gOutputOn;
+		// Release the output lock.
+		gOutputUnlock(f);
 
 		// Reset the state to where it was.
 		described = b;
@@ -42,31 +47,62 @@ modify Thing
 		defaultDescReport(&thirdPersonBasicExamine, gActor, self);
 	}
 
+	_thirdPersonOutputOff() {
+		_thirdPersonFlag = true;
+		thirdPersonFilter.active = true;
+		gTranscript.deactivate();
+	}
+
+	_thirdPersonOutputOn() {
+		gTranscript.activate();
+		thirdPersonFilter.active = nil;
+		_thirdPersonFlag = nil;
+	}
+
 	basicExamineSmell(explicit) {
 		if(!isThirdPerson()) {
 			inherited(explicit);
 			return;
 		}
-		defaultDescReport(&thirdPersonSmell, gActor, self);
+
+		if(_thirdPersonFlag == nil)
+			_thirdPersonSmell(explicit);
+		else
+			inherited(explicit);
 	}
+
+	_thirdPersonSmell(explicit) {
+		if(explicit)
+			defaultDescReport(&thirdPersonSmell, gActor, self);
+
+		_thirdPersonOutputOff();
+		if(gAction.ofKind(SmellAction))
+			newActorAction(gActor, Smell, self);
+		else if(gAction.ofKind(ExamineAction))
+			newActorAction(gActor, Examine, self);
+		_thirdPersonOutputOn();
+	}
+
 	basicExamineListen(explicit) {
 		if(!isThirdPerson()) {
 			inherited(explicit);
 			return;
 		}
-		defaultDescReport(&thirdPersonListen, gActor, self);
+		
+		if(_thirdPersonFlag == nil)
+			_thirdPersonListen(explicit);
+		else
+			inherited(explicit);
+	}
+
+	_thirdPersonListen(explicit) {
+		if(explicit)
+			defaultDescReport(&thirdPersonListen, gActor, self);
+		_thirdPersonOutputOff();
+		if(gAction.ofKind(ListenToAction))
+			newActorAction(gActor, ListenTo, self);
+		else if(gAction.ofKind(ExamineAction))
+			newActorAction(gActor, Examine, self);
+		_thirdPersonOutputOn();
 	}
 ;
-
-thirdPersonFilter: OutputFilter, PreinitObject
-	active = nil
-	filterText(str, val) { return(active ? '' : inherited(str, val)); }
-	execute() { mainOutputStream.addOutputFilter(self); }
-;
-
-class ThirdPersonTranscript: CommandTranscript
-	addReport(report) {}
-	filterText(ostr, txt)  { return(nil); }
-	reports_ = static []
-;
-

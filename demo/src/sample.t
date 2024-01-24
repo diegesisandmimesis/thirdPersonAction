@@ -55,6 +55,7 @@ gameMain: GameMainDef initialPlayerChar = me;
 
 DefineSystemAction(Foozle)
 	execSystemAction() {
+		aioSay('\n===START===\n ');
 		//_tryCommand(alice, 'x pebble');
 		//_tryCommand(alice, 'x flower');
 		//_tryCommand(alice, 'x radio');
@@ -64,7 +65,8 @@ DefineSystemAction(Foozle)
 		//_tryCommand(alice, 'listen to radio');
 		newActorAction(alice, Smell, pebble);
 		newActorAction(alice, Smell, flower);
-		flower.basicExamineSmell(true);
+		newActorAction(alice, Examine, flower);
+		aioSay('\n===END===\n ');
 	}
 	_tryCommand(actor, cmd) {
 		"\n<q><<toString(cmd)>></q> as <<actor.name>>:\n ";

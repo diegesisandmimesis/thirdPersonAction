@@ -56,12 +56,20 @@ gameMain: GameMainDef initialPlayerChar = me;
 DefineSystemAction(Foozle)
 	execSystemAction() {
 		aioSay('\n===START===\n ');
-		newActorAction(alice, Smell, pebble);
-		newActorAction(alice, Smell, flower);
-		newActorAction(alice, Examine, flower);
-		newActorAction(alice, ListenTo, pebble);
-		newActorAction(alice, ListenTo, radio);
+		_tryCommand(alice, 'x pebble');
+		_tryCommand(alice, 'x flower');
+		_tryCommand(alice, 'x radio');
+		_tryCommand(alice, 'smell pebble');
+		_tryCommand(alice, 'smell flower');
+		_tryCommand(alice, 'listen to pebble');
+		_tryCommand(alice, 'listen to radio');
 		aioSay('\n===END===\n ');
+	}
+	_tryCommand(actor, cmd) {
+		"\n<q><<toString(cmd)>></q> as <<actor.name>>:\n ";
+		execCommandAs(actor, cmd);
+		"\n==========\n ";
+		"<.p>\n ";
 	}
 ;
 VerbRule(Foozle) 'foozle': FoozleAction VerbPhrase = 'foozle/foozling';

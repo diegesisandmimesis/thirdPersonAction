@@ -2,6 +2,34 @@
 //
 // thirdPersonAction.t
 //
+//	A TADS3/adv3 module that modifies stock actions whose default
+//	behavior only works when the action is taken by the player.
+//
+//	For example, something like:
+//
+//		newActorAction(alice, Smell, flower);
+//
+//	...will by default output something like:
+//
+//		Alice smells nothing out of the ordinary.
+//
+//	...without any indication why the game is outputting this message.
+//
+//	With this module, the same action will instead produce:
+//
+//		Alice smells the flower.
+//
+//
+//	Any side-effects of the default action _should_ be executed normally,
+//	only without their normal output.  So if, for example, the flower
+//	has something like:
+//
+//		smellDesc = "It smells like a flower.  <<someMethod()>>"
+//
+//	...then someMethod() will be executed just as if the smellDesc
+//	was displayed.
+//
+//
 #include <adv3.h>
 #include <en_us.h>
 

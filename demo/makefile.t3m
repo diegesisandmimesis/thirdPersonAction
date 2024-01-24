@@ -6,8 +6,5 @@
 -lib system
 -lib adv3/adv3
 -lib outputToggle/outputToggle
--lib moreFailureReports/moreFailureReports
--lib modularExecuteCommand/modularExecuteCommand
--lib execCommandAs/execCommandAs
 -lib ../thirdPersonAction
 -source src/sample.t

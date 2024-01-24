@@ -74,3 +74,12 @@ DefineSystemAction(Foozle)
 ;
 VerbRule(Foozle) 'foozle': FoozleAction VerbPhrase = 'foozle/foozling';
 
+/*
+// Debugging for nextRunTime nonsense.
+modify Actor
+	executeAgenda() {
+		aioSay('\nexecuteAgenda()\n ');
+		inherited();
+	}
+;
+*/

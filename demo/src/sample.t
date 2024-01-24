@@ -49,6 +49,10 @@ startRoom: Room 'Void' "This is a featureless void.";
 	isHer = true
 	isProperName = true
 ;
+++aliceAgenda: AgendaItem
+	initiallyActive = true
+	isReady = nil
+;
 
 versionInfo: GameID;
 gameMain: GameMainDef initialPlayerChar = me;
@@ -65,4 +69,3 @@ DefineSystemAction(Foozle)
 	}
 ;
 VerbRule(Foozle) 'foozle': FoozleAction VerbPhrase = 'foozle/foozling';
-

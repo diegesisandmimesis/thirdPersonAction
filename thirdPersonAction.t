@@ -123,7 +123,7 @@ modify Thing
 
 	// Generic sense wrapper method.
 	_thirdPersonSenseExamine(explicit, prop) {
-		local cls;
+		local cls, t;
 
 		// If we're being explicitly examined via a sense (other
 		// than sight), we display a report that indicates that
@@ -144,8 +144,16 @@ modify Thing
 		// Since we turned off all output this should be silent, but
 		// it'll produce any side-effects the action might have
 		// (like setting a revealed flag).
-		if((cls = _getActionClass()) != nil)
+		if((cls = _getActionClass()) != nil) {
+			// Remember the actor's next turn.
+			t = gActor.nextRunTime;
+
 			newActorActionClass(gActor, cls, self);
+
+			// Reset the actor's next turn to be whatever it
+			// was before our sneaky fake action.
+			gActor.nextRunTime = t;
+		}
 
 		// Turn output back on.
 		_thirdPersonOutputOn();
@@ -196,3 +204,14 @@ modify Thing
 		return(cls);
 	}
 ;
+
+/*
+_newThirdPersonAction(transcriptClass, issuingActor, targetActor, actionClass, [objs]) {
+	local action;
+
+	action = actionClass.createActionInstance();
+	action.actionTime = 0;
+	return(newActionObj(transcriptClass, issuingActor, targetActor, action,
+		objs...));
+}
+*/

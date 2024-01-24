@@ -75,59 +75,93 @@ modify Thing
 		_thirdPersonRecursionFlag = nil;
 	}
 
-/*
 	basicExamineSmell(explicit) {
 		if(!isThirdPerson()) {
 			inherited(explicit);
 			return;
 		}
-
 		if(_thirdPersonRecursionFlag == nil)
-			_thirdPersonSmell(explicit);
+			_thirdPersonSenseExamine(explicit, &thirdPersonSmell);
 		else
 			inherited(explicit);
-	}
-*/
-	basicExamineSmell(explicit) {
-		thirdPersonBasicExamineSense(explicit, &thirdPersonSmell);
 	}
 
 	basicExamineListen(explicit) {
-		thirdPersonBasicExamineSense(explicit, &thirdPersonListen);
-	}
-
-	thirdPersonBasicExamineSense(explicit, prop) {
 		if(!isThirdPerson()) {
 			inherited(explicit);
 			return;
 		}
-
 		if(_thirdPersonRecursionFlag == nil)
-			_thirdPersonSenseExamine(explicit, prop);
+			_thirdPersonSenseExamine(explicit, &thirdPersonListen);
 		else
 			inherited(explicit);
 	}
 
+	// Generic sense wrapper method.
+	_thirdPersonSenseExamine(explicit, prop) {
+		local cls;
+
+		// If we're being explicitly examined via a sense (other
+		// than sight), we display a report that indicates that
+		// an NPC is taking an action.  This will be
+		// something like "Alice smells the flower."
+		// The explicit flag WON'T be set if we're getting called
+		// from something like a basic examine on an object with
+		// a non-sight sense presence, e.g. >X FLOWER if
+		// flower.smellPresence = true.
+		if(explicit)
+			defaultDescReport(prop, gActor, self);
+
+		// Toggle our output off.
+		_thirdPersonOutputOff();
+
+		// Figure out what kind of Action the current gAction is,
+		// and do a nested version of it.
+		// Since we turned off all output this should be silent, but
+		// it'll produce any side-effects the action might have
+		// (like setting a revealed flag).
+		if((cls = _getActionClass()) != nil)
+			newActorActionClass(gActor, cls, self);
+
+		// Turn output back on.
+		_thirdPersonOutputOn();
+	}
+
+	// Figure out what action class gAction is an instance of.
 	_getActionClass() {
 		local i, l;
 
+		// First, we need an action.
 		if(gAction == nil)
 			return(nil);
 
 		l = gAction.getSuperclassList();
 
+		// If there's only one class in the superclass list,
+		// it's what we want.
 		if(l.length == 1) {
+			// We make sure it's a valid action class, but in
+			// practice this check should never fail.
 			if(_checkActionClass(l[1]))
 				return(l[1]);
+
 			return(nil);
 		}
+
+		// This is messier.  We have multiple classes in the
+		// superclass list, so we just look for the first one that's
+		// an TAction.
 		for(i = 1; i <= l.length; i++) {
 			if(_checkActionClass(l[i]))
 				return(l[i]);
 		}
+
 		return(nil);
 	}
 
+	// Make sure we like the class.  We're doing this on an object,
+	// so we only care about TAction subclasses.
+	// FIXME:  Maybe we should also check for TIAction?
 	_checkActionClass(cls) {
 		if(cls == nil)
 			return(nil);
@@ -137,66 +171,4 @@ modify Thing
 			return(nil);
 		return(cls);
 	}
-
-	_thirdPersonSenseExamine(explicit, prop) {
-		local cls;
-
-		if(explicit)
-			defaultDescReport(prop, gActor, self);
-
-		_thirdPersonOutputOff();
-
-		if((cls = _getActionClass()) != nil) {
-			newActorActionClass(gActor, cls, self);
-		}
-
-		_thirdPersonOutputOn();
-	}
-
-/*
-	_thirdPersonSmell(explicit) {
-		_thirdPersonSenseExamine(explicit, &thirdPersonSmell);
-	}
-*/
-/*
-	_thirdPersonSmell(explicit) {
-		local cls;
-
-		if(explicit)
-			defaultDescReport(&thirdPersonSmell, gActor, self);
-
-		_thirdPersonOutputOff();
-
-		if((cls = _getActionClass()) != nil) {
-			newActorActionClass(gActor, cls, self);
-		}
-
-		_thirdPersonOutputOn();
-	}
-*/
-
-/*
-	basicExamineListen(explicit) {
-		if(!isThirdPerson()) {
-			inherited(explicit);
-			return;
-		}
-		
-		if(_thirdPersonRecursionFlag == nil)
-			_thirdPersonListen(explicit);
-		else
-			inherited(explicit);
-	}
-
-	_thirdPersonListen(explicit) {
-		if(explicit)
-			defaultDescReport(&thirdPersonListen, gActor, self);
-		_thirdPersonOutputOff();
-		if(gAction.ofKind(ListenToAction))
-			newActorAction(gActor, ListenTo, self);
-		else if(gAction.ofKind(ExamineAction))
-			newActorAction(gActor, Examine, self);
-		_thirdPersonOutputOn();
-	}
-*/
 ;

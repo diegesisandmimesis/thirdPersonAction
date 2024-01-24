@@ -83,17 +83,10 @@ modify Thing
 		// Set an output lock.  This will prevent output, and we'll
 		// use it to check for nested actions.
 		_thirdPersonOutputLock = gOutputLock;
-
-		// Deactivate the transcript, to prevent queuing of
-		// reports.
-		gTranscript.deactivate();
 	}
 
 	// Turn output back on after a nested action.
 	_thirdPersonOutputOn() {
-		// Re-enable the transcript.
-		gTranscript.activate();
-
 		// Remove the output lock.
 		gOutputUnlock(_thirdPersonOutputLock);
 		_thirdPersonOutputLock = nil;

@@ -68,4 +68,4 @@ DefineSystemAction(Foozle)
 		aioSay('\n===END===\n ');
 	}
 ;
-VerbRule(Foozle) 'foozle': FoozleAction VerbPhrase = 'foozle/foozling';
+VerbRule(Foozle) 'foozle': FoozleAction verbPhrase = 'foozle/foozling';

@@ -25,7 +25,7 @@ startRoom: Room 'Void'
 	"This is a featureless void."
 	north = otherRoom
 ;
-+me: Person 'player' 'you';
++me: Person 'player' 'player';
 +pebble: Thing 'small round pebble' 'pebble' "A small, round pebble. ";
 +alice: Person 'Alice' 'Alice'
 	"She looks like the first person you'd turn to in a problem. "
@@ -36,21 +36,22 @@ startRoom: Room 'Void'
 	"This is the pebble topic. "
 ;
 ++InConversationState
-	specialDesc = "Alice is here, talking with you. "
+//FOO
+	specialDesc = "Alice is here, talking with <<alice.lastInterlocutor.theName>>. "
 	stateDesc = "She's watching you as you talk. "
 ;
 +++ConversationReadyState
 	isInitState = true
-	specialDesc = "This is the ConversationReadyState description. "
+	specialDesc = "Alice is here, in the ConversationReadyState. "
 	stateDesc = "Alice is in ConversationReadyState. "
 ;
-++++NPCTopicGroup otherActor = gPlayerChar;
+++++TopicGroupFor @gPlayerChar;
 +++++aliceHelloTopicPlayer: ActorHelloTopic, StopEventList
 	[ 'This is Alice\'s hello topic for the player.' ]
 ;
-++++NPCTopicGroup otherActor = bob;
+++++TopicGroupFor @bob;
 +++++aliceHelloTopicBob: ActorHelloTopic, StopEventList
-	[ 'This is Alice\'s hello topic for the Bob.' ]
+	[ 'This is Alice\'s hello topic for Bob.' ]
 ;
 ++++aliceHelloTopicDefault: HelloTopic, StopEventList
 	[
@@ -82,10 +83,25 @@ otherRoom: Room 'Other Room'
 versionInfo: GameID;
 gameMain: GameMainDef initialPlayerChar = me;
 
-DefineSystemAction(Foozle)
-	execSystemAction() {
-		//defaultReport(&thirdPersonTalkTo, gActor, alice);
-		execCommandAs(alice, 'talk to player');
+DefineTIAction(Foozle);
+VerbRule(Foozle) 'foozle' singleDobj singleIobj: FoozleAction
+	verbPhrase = 'foozle/foozling (what) (to whom)';
+
+modify Thing
+	dobjFor(Foozle) {
+		verify() { illogical('{You/he} can\'t foozle that. '); }
+	}
+	iobjFor(Foozle) {
+		verify() { illogical('{You/he dobj} can\'t foozle that. '); }
 	}
 ;
-VerbRule(Foozle) 'foozle': FoozleAction VerbPhrase = 'foozle/foozling';
+
+modify Person
+	dobjFor(Foozle) {
+		verify() {}
+		action() {
+			execCommandAs(self, 'talk to <<gIobj.name>>');
+		}
+	}
+	iobjFor(Foozle) { verify() {} }
+;

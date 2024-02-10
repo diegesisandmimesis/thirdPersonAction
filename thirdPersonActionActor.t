@@ -39,6 +39,30 @@ modify Actor
 		if(node != nil)
 			curConvNode.npcInitiateConversation();
 	}
+
 ;
+
+/*
+modify Thing
+	lastInterlocutorName = (lastInterlocutor ? lastInterlocutor.theName : 'nobody')
+;
+
+modify MessageBuilder
+	execBeforeMe = [ thirdPersonActionMessageBuilder ]
+;
+
+thirdPersonActionMessageBuilder: PreinitObject
+	execute() {
+		langMessageBuilder.paramList_
+			= langMessageBuilder.paramList_.append([
+				'other/him',
+				&lastInterlocutorName,
+				nil,
+				nil,
+				nil
+			]);
+	}
+;
+*/
 
 #endif // THIRD_PERSON_ACTION_TALK_TO

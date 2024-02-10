@@ -21,12 +21,8 @@ modify playerActionMessages
 		return('{You/He} consider{s} talking to <<obj.theName>>
 			but then change{s} {its/her} mind. ');
 	}
-/*
-	thirdPersonTalkTo(actor) {
-		//return('{You/He} consider{s} talking to <<actor.theName>>
-			//but then change{s} {its/her} mind. ');
-		return('Foozle');
+	thirdPersonCantTalkToThat(obj) {
+		return('{You/he} can\'t talk to {that/him dobj}');
 	}
-*/
 ;
 

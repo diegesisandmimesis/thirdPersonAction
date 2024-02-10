@@ -17,4 +17,6 @@
 #define newActorActionClass(actor, cls, objs...) \
 	_newAction(CommandTranscript, nil, actor, cls, ##objs)
 
+TopicGroupFor template @otherActor;
+
 #define THIRD_PERSON_ACTION_H

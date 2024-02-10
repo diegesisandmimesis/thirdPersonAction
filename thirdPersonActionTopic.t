@@ -7,7 +7,7 @@
 
 #include "thirdPersonAction.h"
 
-class NPCTopicGroup: TopicGroup
+class TopicGroupFor: TopicGroup
 	isActive = ((gActor == getTopicOwner()) && (gDobj == otherActor))
 	otherActor = nil
 ;

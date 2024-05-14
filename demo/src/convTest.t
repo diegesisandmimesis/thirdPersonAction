@@ -32,12 +32,9 @@ startRoom: Room 'Void'
 	isHer = true
 	isProperName = true
 ;
-++AskTellTopic @pebble
-	"This is the pebble topic. "
-;
 ++InConversationState
-//FOO
-	specialDesc = "Alice is here, talking with <<alice.lastInterlocutor.theName>>. "
+	specialDesc = "Alice is here, talking with
+		<<alice.lastInterlocutor.theName>>. "
 	stateDesc = "She's watching you as you talk. "
 ;
 +++ConversationReadyState

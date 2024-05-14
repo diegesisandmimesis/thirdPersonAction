@@ -48,7 +48,7 @@ modify Thing
 ;
 
 modify MessageBuilder
-	execBeforeMe = [ thirdPersonActionMessageBuilder ]
+	execBeforeMe = (nilToList(inherited()) + [ thirdPersonActionMessageBuilder ])
 ;
 
 thirdPersonActionMessageBuilder: PreinitObject

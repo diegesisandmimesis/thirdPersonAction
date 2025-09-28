@@ -26,3 +26,8 @@ modify playerActionMessages
 	}
 ;
 
+modify npcActionMessages
+	cannotOpenLockedMsg = '{The actor/him} attempt{s} to open
+		{the dobj/he} but it seem{s/ed} to be locked. '
+;
+
